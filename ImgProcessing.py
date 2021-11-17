@@ -61,15 +61,17 @@ def motion_history_image ( timestamp, thresh, frame_width, frame_height, motion_
             continue
 
         angle  = cv2.motempl.calcGlobalOrientation( orient_roi, mask_roi, mhi_roi, timestamp, MHI_DURATION) 
+
         r      = min( w//2, h//2)
         cx, cy = x+w//2 , y+h//2
         if i != 0:
             motions.append({"X": x,"Y":y,"Width": w,"Height": h,"Circle_X": cx,"Circle_Y": cy,"Radius": r,"Angle": angle})
             
+
     return motions
 
 
-def remove_ccd_time(img):
+def remove_ccd_time(img): 
     minx, miny = 1055, 0
     maxx, maxy = 1920, 70
     img[ miny:maxy, minx:maxx] = 0
@@ -105,10 +107,10 @@ def auto_gamma_correction(img):
     mean  = np.mean(gray)
     if mean == 255:
         mean = 254
-    gamma = math.log10(0.5)/math.log10(mean/255)/2
+    gamma = math.log10(0.5)/math.log10(mean/255)/2 
 
-    gamma_table = [np.power(x / 255.0, gamma) * 255.0 for x in range(256)]
-    gamma_table = np.round(np.array(gamma_table)).astype(np.uint8)
+    gamma_table = [np.power(x / 255.0, gamma) * 255.0 for x in range(256)]  
+    gamma_table = np.round(np.array(gamma_table)).astype(np.uint8) 
 
-    return cv2.LUT(img, gamma_table)
+    return cv2.LUT(img, gamma_table) 
 

@@ -14,7 +14,7 @@ def fishdict_to_csv( csv_path, frame_index, fish_dict):
     csv_dict['FrameIndex'] = frame_index
 
     csv_fishdict  = {}
-    attributes    = ['x','y']
+    attributes    = ['x','y'] 
     fishdict_keys = list(fish_dict.keys())
     for i in range( 0, len(fishdict_keys), 1):
         fish_id = fishdict_keys[i]
@@ -32,7 +32,7 @@ def fishdict_to_csv( csv_path, frame_index, fish_dict):
     csv_dict.update(csv_fishdict)
     
     with open( csv_path, 'a', newline='') as csvfile:
-        fieldnames = list(csv_dict.keys())
+        fieldnames = list(csv_dict.keys()) 
         writer     = csv.DictWriter( csvfile, fieldnames= fieldnames)
         if frame_index == 1:
             writer.writeheader()

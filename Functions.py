@@ -2,10 +2,12 @@ import cv2
 import numpy as np
 import random
 
+import shapely.geometry
 import shapely.affinity
 from shapely.geometry import Polygon
 
 import DataProcessing
+
 
 def two_shape_intersect( shape1, shape1_type, shape2, shape2_type):
     mode = ''
@@ -37,7 +39,8 @@ def two_shape_intersect( shape1, shape1_type, shape2, shape2_type):
     return intersect
 
 
-def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
+def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary): 
+    frame_height, frame_width = frame.shape[:2]
     b_minx, b_miny = boundary[0][0], boundary[0][1]
     b_maxx, b_maxy = boundary[1][0], boundary[1][1]
     region_list = []
@@ -47,7 +50,7 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
             if i < j :
                 temp_list  = [no_cmp_mot[i],no_cmp_mot[j]]
                 motion_box = []
-                for k in range( 0, len(temp_list), 1): # 
+                for k in range( 0, len(temp_list), 1):
                     mot_id = temp_list[k]
                     mot_x, mot_y = motions[mot_id]["X"], motions[mot_id]["Y"]
                     mot_w, mot_h = motions[mot_id]["Width"], motions[mot_id]["Height"]
@@ -67,13 +70,14 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
         if bool_intersect == False:
             region_list.append(( no_cmp_mot[i], no_cmp_mot[i]))
     
+    
     res_list = []
     for i in range( 0, len(region_list), 1):
         id1 = region_list[i][0]
         id2 = region_list[i][1]
         bool1, index1 = DataProcessing.find_in_list( res_list, id1)
         bool2, index2 = DataProcessing.find_in_list( res_list, id2)
-        if bool1 == True and bool2 == True:
+        if bool1 == True and bool2 == True: 
             if index1 != index2:
                 group1 = res_list[index1]
                 group2 = res_list[index2]
@@ -81,13 +85,13 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
                 res_list.remove(group1)
                 res_list.remove(group2)
 
-        elif bool1 == True and bool2 == False:
+        elif bool1 == True and bool2 == False: 
             temp = res_list[index1]+(id2,)
             res_list[index1] = temp
-        elif bool1 == False and bool2 == True:
+        elif bool1 == False and bool2 == True: 
             temp = res_list[index2]+(id1,)
             res_list[index2] = temp
-        elif bool1 == False and bool2 == False:
+        elif bool1 == False and bool2 == False: 
             temp = region_list[i]
             res_list.append(temp)
 
@@ -95,7 +99,7 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
         res_list[i] = sorted(list(set(res_list[i])))
 
     roi_box_list = [] 
-    for i in range( 0, len(res_list), 1):
+    for i in range( 0, len(res_list), 1): 
         res_sublist = res_list[i]
         minx, miny  = 0, 0
         maxx, maxy  = 0, 0
@@ -122,7 +126,7 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
     uni_roi_box_list  = []
     bool_intersect    = False
     bool_no_intersect = True
-    for i in range( 0, len(roi_box_list), 1):
+    for i in range( 0, len(roi_box_list), 1): 
         for j in range( 0, len(roi_box_list), 1): 
             if i < j:
                 box1_x1, box1_y1 = roi_box_list[i][0][0], roi_box_list[i][0][1]
@@ -138,7 +142,7 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
                     bool_no_intersect = False
                     bool1, index1 = DataProcessing.find_in_list( uni_roi_box_list, i)
                     bool2, index2 = DataProcessing.find_in_list( uni_roi_box_list, j)
-                    if bool1 == True and bool2 == True:
+                    if bool1 == True and bool2 == True: 
                         if index1 != index2:
                             group1 = uni_roi_box_list[index1]
                             group2 = uni_roi_box_list[index2]
@@ -154,7 +158,7 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
                         temp = uni_roi_box_list[index2]+(i,)
                         uni_roi_box_list[index2] = temp
 
-                    elif bool1 == False and bool2 == False:
+                    elif bool1 == False and bool2 == False: 
                         temp = (i,j)
                         uni_roi_box_list.append(temp)
             
@@ -164,7 +168,7 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
         elif bool_no_intersect == False:
             bool_no_intersect == True
     
-    if bool_intersect == True:
+    if bool_intersect == True: 
         temp_roi_box_list = []
         temp_res_list     = []
         for i in range( 0, len(uni_roi_box_list), 1):
@@ -195,7 +199,8 @@ def mhis_intersect( frame, motions, no_cmp_mot, scale_rate, boundary):
 def two_contourIntersect( original_image, contour1, contour2):
     contours = [contour1, contour2]
 
-    blank  = np.zeros(original_image.shape[0:2])
+    blank = np.zeros(original_image.shape[0:2])
+
     image1 = cv2.drawContours(blank.copy(), contours, 0, 1)
     image2 = cv2.drawContours(blank.copy(), contours, 1, 1)
 
@@ -214,15 +219,17 @@ def two_contourIntersect_area( original_image, contour1, contour2):
 
     intersection = image1 + image2
 
+    image1_area = np.sum(image1 == 1)
+    image2_area = np.sum(image2 == 1)
     intersection_area = np.sum( intersection == 2)
 
     return intersection.any(), intersection_area
 
 
+
 def filter_contour_bgr( cnt1_bgr, cnt2_bgr):
     BGRDiff_Limit = 25
     bool_color    = True 
-
     if abs(cnt1_bgr[1]-cnt2_bgr[1]) > BGRDiff_Limit:
         bool_color = False
 
@@ -233,13 +240,13 @@ def filter_contour_bgr( cnt1_bgr, cnt2_bgr):
 
 
 def fishid_color_create( fishcolor_dict, fish_dict):
-    pixel_deep    = 170
+    pixel_deep    = 170 
     fishdict_keys = list(fish_dict.keys())
     for i in range( 0, len(fish_dict), 1):
         color_b = random.randint(pixel_deep,255)
         color_g = random.randint(pixel_deep,255)
         color_r = random.randint(pixel_deep,255)
-        while color_b <= 30 and color_g <= 30 and color_r <= 235:
+        while color_b <= 30 and color_g <= 30 and color_r <= 235: 
             color_b = random.randint(pixel_deep,255)
             color_g = random.randint(pixel_deep,255)
             color_r = random.randint(pixel_deep,255)
@@ -250,8 +257,8 @@ def fishid_color_create( fishcolor_dict, fish_dict):
 
     return fishcolor_dict
 
-def fishid_color_update( fishcolor_dict, fish_dict):
-    pixel_deep     = 170
+def fishid_color_update( fishcolor_dict, fish_dict): 
+    pixel_deep     = 170 
     fishcolor_keys = list(fishcolor_dict.keys())
     fishdict_keys  = list(fish_dict.keys())
     for i in range( 0, len(fish_dict), 1):
@@ -262,7 +269,7 @@ def fishid_color_update( fishcolor_dict, fish_dict):
             color_b = random.randint(pixel_deep,255)
             color_g = random.randint(pixel_deep,255)
             color_r = random.randint(pixel_deep,255)
-            while color_b <= 30 and color_g <= 30 and color_r <= 235:
+            while color_b <= 30 and color_g <= 30 and color_r <= 235: 
                 color_b = random.randint(pixel_deep,255)
                 color_g = random.randint(pixel_deep,255)
                 color_r = random.randint(pixel_deep,255)
@@ -303,8 +310,8 @@ def transfer_cntid_fishid( unionid_list, cntid_fish):
                 continue
             fishid_list = fishid_list + fishids
 
-        fishid_list = list(set(fishid_list))
-        fishid_list.sort()
+        fishid_list = list(set(fishid_list)) 
+        fishid_list.sort() 
 
         unionfishid_list.extend([[ fishid_list, nextcntid_list]])
 
@@ -351,7 +358,7 @@ def compute_roi_cntrect( frame, cnt, multiple, boundary):
 
     minx = int(max( x-multiple*w, b_minx))
     miny = int(max( y-multiple*h, b_miny))
-    maxx = int(min( x+(1+multiple)*w, b_maxx))
+    maxx = int(min( x+(1+multiple)*w, b_maxx)) 
     maxy = int(min( y+(1+multiple)*h, b_maxy))
 
     roi_coordinate = {'minx': minx, 'miny': miny, 'maxx': maxx, 'maxy': maxy}

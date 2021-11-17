@@ -79,7 +79,7 @@ def transform_fishareadict( init_fishid, fisharea_dict):
 
 def transform_fishcolordict( init_fishid, fishcolor_dict):
     new_fishcolor_dict = {}
-    oldfishid_keys     = list(fishcolor_dict.keys())
+    oldfishid_keys    = list(fishcolor_dict.keys())
     for i in range( 0, len(oldfishid_keys), 1):
         old_fishid = oldfishid_keys[i]
         if old_fishid not in list(init_fishid.keys()):
@@ -89,4 +89,5 @@ def transform_fishcolordict( init_fishid, fishcolor_dict):
         new_fishcolor_dict[new_fishid] = old_fishcolor
 
     return new_fishcolor_dict
+
 

@@ -86,9 +86,10 @@ def cntid_rematch(frame_index, frame_dict, history_contour_dict, fish_dict, fish
 
     if frame_index <= LookBackTime:
         compare_result, bool_same, change_fishids = Rematch.fishid_rematch_cntid_less( frame_index, fish_dict, compare_dict, contours, history_contour_dict)
+
     elif frame_index > LookBackTime:
         compare_result, bool_same, change_fishids = Rematch.fishid_rematch_cntid( frame_index, frame_dict, history_contour_dict, fish_dict, contours)
-    
+
     if bool_same == False:
         pre_frameindex = frame_index - 1
         fish_dict, fisharea_dict, avgfish_bgr = Rematch.update_new_compare( compare_result, change_fishids, pre_frameindex, fish_dict, fisharea_dict, avgfish_bgr, frame, contours)
@@ -98,9 +99,11 @@ def cntid_rematch(frame_index, frame_dict, history_contour_dict, fish_dict, fish
 
 
 def cntid_compare_union( frame_index, fish_dict, compare_dict):
-    unionid_list           = Functions.id_union(compare_dict)
+    unionid_list = Functions.id_union(compare_dict)
+
     fishid_cnt, cntid_fish = Functions.create_fishid_cntid( fish_dict, frame_index)
-    unionfishid_list       = Functions.transfer_cntid_fishid( unionid_list, cntid_fish)
+
+    unionfishid_list = Functions.transfer_cntid_fishid( unionid_list, cntid_fish)
     
     return unionid_list, unionfishid_list
 
@@ -113,7 +116,7 @@ def check_comparedict( frame_index, fish_dict, unionfishid_list, contours, next_
 
     if len(miss_fishids) > 0:
         unionfishid_list, next_contours, useoldcnt_fishids = Refind.refind_fish_deep( frame_index, fish_dict, miss_fishids, unionfishid_list, contours, next_contours, frame, nextframe, boundary)
-        
+
     cont = 0
     for i in range( 0, len(unionfishid_list), 1):
         if len(unionfishid_list[i-cont][0]) == 0:
@@ -129,7 +132,8 @@ def check_comparedict( frame_index, fish_dict, unionfishid_list, contours, next_
 def fishid_cnt_assignment( frame_index, fish_dict, fisharea_dict, unionfishid_list, contours, next_contours, nextframe, boundary):
     fishid_cnt, cntid_fish = Functions.create_fishid_cntid( fish_dict, frame_index)
 
-    nextcnt_percent     = Cost.check_contour_areapercent( fishid_cnt, unionfishid_list, fisharea_dict, contours, next_contours, nextframe, frame_index, boundary)
+    nextcnt_percent = Cost.check_contour_areapercent( fishid_cnt, unionfishid_list, fisharea_dict, contours, next_contours, nextframe, frame_index, boundary)
+
     cost_nextcntid_list = Cost.nextcntid_costlist_create(nextcnt_percent)
 
     if frame_index == 2:
@@ -178,11 +182,11 @@ def create_fishdict( fish_dict, compare_result, contours, next_contours, frame_i
         nextcnt    = next_contours[nextcnt_id]
 
         cnt_m  = cv2.moments(cnt)
-        cnt_cx = int(cnt_m["m10"]/cnt_m["m00"])
-        cnt_cy = int(cnt_m['m01']/cnt_m['m00'])
+        cnt_cx = int(cnt_m["m10"]/cnt_m["m00"]) 
+        cnt_cy = int(cnt_m['m01']/cnt_m['m00']) 
 
         nextcnt_m  = cv2.moments(nextcnt)
-        nextcnt_cx = int(nextcnt_m["m10"]/nextcnt_m["m00"])
+        nextcnt_cx = int(nextcnt_m["m10"]/nextcnt_m["m00"]) 
         nextcnt_cy = int(nextcnt_m['m01']/nextcnt_m['m00']) 
 
         line_angle = DataProcessing.getAngleBetweenPoints( cnt_cx, cnt_cy, nextcnt_cx, nextcnt_cy)
@@ -192,7 +196,7 @@ def create_fishdict( fish_dict, compare_result, contours, next_contours, frame_i
         details["NextContourID"]          = nextcnt_id
         details["NextContourInedexPoint"] = (nextcnt_cx,nextcnt_cy)
         details["LineAngle"]              = round( line_angle, 2)
-        details["Intersect"]              = intersect_fishids[nextcnt_id]
+        details["Intersect"]              = intersect_fishids[nextcnt_id] 
 
         if cnt_id in list(cnt_mot_cmptable.keys()):
             mhi_circle_x     = cnt_mot_cmptable[cnt_id]["Circle_X"]
@@ -235,7 +239,7 @@ def compute_avgfish_area( fisharea_dict, frame_index, frame_dict, fish_dict, nex
         nextcnt_id  = intersect_fishids_keys[i]
         fishid_list = intersect_fishids[nextcnt_id]
         if len(fishid_list) == 1:
-            intersect_fishids[nextcnt_id] = None
+            intersect_fishids[nextcnt_id] = None 
 
     cont, sum_b, sum_g, sum_r = 0, 0, 0, 0
     fishid_list = list(fishid_cmpdict.keys())
@@ -262,7 +266,7 @@ def compute_avgfish_area( fisharea_dict, frame_index, frame_dict, fish_dict, nex
     cntarea_dict_values = list(fisharea_dict.values())
     avgfish_area        = round( sum(cntarea_dict_values) / len(fisharea_dict), 2)
 
-    if cont == 0:
+    if cont == 0: 
         avgfish_bgr = avgfish_bgr
     elif cont != 0: 
         grow_limit = 10

@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
- 
+
 def write_frameIndex( frame, frame_index, coordinate1, coordinate2):
     img = frame.copy()
     cv2.rectangle( img, coordinate1, coordinate2, (0,0,0), -1)
@@ -10,7 +10,6 @@ def write_frameIndex( frame, frame_index, coordinate1, coordinate2):
     cv2.putText( img , str(frame_index), (text_x,text_y), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 2, cv2.LINE_AA) 
 
     return img
-
 
 def draw_fishid_contours( frame, cntid_dict, cnt_list, fishcolor_dict, r):
     img = frame.copy()
@@ -26,7 +25,7 @@ def draw_fishid_contours( frame, cntid_dict, cnt_list, fishcolor_dict, r):
             fish_color = fishcolor_dict[fish_id]
             status     = 'single'
 
-        elif len(fishid_list) > 0:
+        elif len(fishid_list) > 0: 
             fishid_str = ""
             for j in range( 0, len(fishid_list), 1):
                 fish_id    = fishid_list[j]
@@ -35,7 +34,7 @@ def draw_fishid_contours( frame, cntid_dict, cnt_list, fishcolor_dict, r):
                 if j < len(fishid_list)-1:
                     fishid_str = fishid_str + " "
             
-            fish_color = ( 0, 0, 255)
+            fish_color = ( 0, 0, 255) 
             fish_num   = fishid_str
             status     = 'interlace'
 
@@ -58,10 +57,10 @@ def draw_fishid_mhi( frame, fishdict_details):
         
         if fish_detail["MHI_Circle_X"] == None and fish_detail["MHI_Circle_Y"] == None:
             continue
-        mhi_cx    = int(fish_detail["MHI_Circle_X"])
-        mhi_cy    = int(fish_detail["MHI_Circle_Y"])
-        mhi_cr    = int(fish_detail["MHI_Circle_R"])
-        mhi_angle = fish_detail["MHI_Circle_Angle"]
+        mhi_cx      = int(fish_detail["MHI_Circle_X"])
+        mhi_cy      = int(fish_detail["MHI_Circle_Y"])
+        mhi_cr      = int(fish_detail["MHI_Circle_R"])
+        mhi_angle   = fish_detail["MHI_Circle_Angle"]
 
         circle_coordinate = ( mhi_cx, mhi_cy)
         linep_coordinate  = (int(mhi_cx+np.cos(mhi_angle)*mhi_cr),int(mhi_cy+np.sin(mhi_angle)*mhi_cr))

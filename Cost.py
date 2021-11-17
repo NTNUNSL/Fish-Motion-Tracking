@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from scipy.optimize import linear_sum_assignment
 
 import Functions
 import DataProcessing
@@ -17,10 +18,10 @@ def check_contour_areapercent( fishid_cnt, unionfishid_list, fisharea_dict, cont
             nextcnt      = next_contours[nextcntid]
             nextcnt_area = cv2.contourArea(nextcnt)
 
-            nextcnt_p = nextcnt_area/avgfish_area
+            nextcnt_p = nextcnt_area/avgfish_area 
             if 1 > nextcnt_p and nextcnt_p > 0.3:
                 nextcnt_p = 1
-            nextcnt_areas.append(nextcnt_p)
+            nextcnt_areas.append(nextcnt_p) 
 
         num_fish = len(fishids)
         if num_fish == 1 and len(nextcntids) > 1:
@@ -52,7 +53,7 @@ def check_contour_areapercent( fishid_cnt, unionfishid_list, fisharea_dict, cont
                 else:
                     nextcnt_areas[j] = 0
         elif len(fishids) == len(nextcntids) and len(fishids) == 2:
-            if 0 in nextcnt_areas:
+            if 0 in nextcnt_areas: 
                 pass
             else:
                 for j in range( 0, len(nextcnt_areas), 1):
@@ -84,28 +85,30 @@ def check_contour_areapercent( fishid_cnt, unionfishid_list, fisharea_dict, cont
             nextcntid = nextcntids[j]
             nextcnt_percent[nextcntid] = result[j]
 
+
     nextcnt_percent = dict(sorted(nextcnt_percent.items()))
 
     return nextcnt_percent
 
 
 def proportional( nseats, votes): 
-    quota=sum(votes)/(1.+nseats)
+    quota=sum(votes)/(1.+nseats) 
     frac=[vote/quota for vote in votes]
     res=[int(f) for f in frac]
-    n=nseats-sum(res)
+    n=nseats-sum(res) 
     if n==0: return res 
-    if n<0 : return [min(x,nseats) for x in res]
+    if n<0: return [min(x,nseats) for x in res] 
     remainders=[ai-bi for ai,bi in zip(frac,res)]
+
     limit=sorted(remainders,reverse=True)[n-1]
 
     for i,r in enumerate(remainders):
         if r>=limit:
             res[i]+=1
-            n-=1
+            n-=1 
             if n==0: return res
 
-    raise
+    raise 
 
 
 def nextcntid_costlist_create( nextcnt_percent):
@@ -120,14 +123,14 @@ def nextcntid_costlist_create( nextcnt_percent):
     return cost_nextcntid_list
 
 
-def costmatrix_distance( fish_dict, unionfishid_list, cost_nextcntid_list, frame_index, next_contours):
+def costmatrix_distance( fish_dict, unionfishid_list, cost_nextcntid_list, frame_index, next_contours): 
     nextcntid_list = []
     for i in range( 0, len(unionfishid_list), 1):
         nextcntid_list = nextcntid_list + unionfishid_list[i][1]
     nextcntid_list.sort()
 
     fishid_list = list(fish_dict.keys())
-    max_size    = max( len(fishid_list), len(cost_nextcntid_list))
+    max_size    = max( len(fishid_list), len(cost_nextcntid_list)) 
     cost_matrix = np.empty((max_size,max_size))
     cost_matrix[:,:] = -1
     max_value   = 0
@@ -151,15 +154,15 @@ def costmatrix_distance( fish_dict, unionfishid_list, cost_nextcntid_list, frame
                 index = index_list[k]
                 cost_matrix[ i, index] = dist
     
-    cost_matrix[ cost_matrix == -1] = max_value + 1
-
+    cost_matrix[ cost_matrix == -1] = max_value + 1 
+    
 
     return cost_matrix
 
 
-def costmatrix_angle( fish_dict, unionfishid_list, cost_nextcntid_list, frame_index, contours, next_contours):
+def costmatrix_angle( fish_dict, unionfishid_list, cost_nextcntid_list, frame_index, contours, next_contours): 
     frameindex_range = 5
-    cost_dict        = {}
+    cost_dict        = {} 
     fishid_list      = list(fish_dict.keys())
     for i in range( 0, len( fishid_list), 1):
         fish_id           = fishid_list[i]
@@ -181,7 +184,6 @@ def costmatrix_angle( fish_dict, unionfishid_list, cost_nextcntid_list, frame_in
             if j == frameindex_end-1:
                 angle_last  = fish_angle2
 
-
         cnt_x = fish_detail["FrameIndex"+str(frameindex_end)]["NextContourInedexPoint"][0]
         cnt_y = fish_detail["FrameIndex"+str(frameindex_end)]["NextContourInedexPoint"][1]
         nextcntid_list = []
@@ -193,8 +195,8 @@ def costmatrix_angle( fish_dict, unionfishid_list, cost_nextcntid_list, frame_in
             nextcnt_id    = nextcntid_list[j]
             nextcnt       = next_contours[nextcnt_id]
             nextcnt_m     = cv2.moments(nextcnt)
-            nextcnt_x     = int(nextcnt_m["m10"]/nextcnt_m["m00"])
-            nextcnt_y     = int(nextcnt_m['m01']/nextcnt_m['m00'])
+            nextcnt_x     = int(nextcnt_m["m10"]/nextcnt_m["m00"]) 
+            nextcnt_y     = int(nextcnt_m['m01']/nextcnt_m['m00']) 
             line_angle    = DataProcessing.getAngleBetweenPoints( cnt_x, cnt_y, nextcnt_x, nextcnt_y)
             anglediff     = min(abs(line_angle-angle_last), abs((line_angle+360)-angle_last), abs((angle_last+360)-line_angle))
             anglediff_sum = anglediff_sum + anglediff
@@ -203,9 +205,9 @@ def costmatrix_angle( fish_dict, unionfishid_list, cost_nextcntid_list, frame_in
             after_diff  = min(abs(angle_start-line_angle),abs((angle_start+360)-line_angle),abs((line_angle+360)-angle_start))
 
             if before_diff == 0: 
-                before_diff = 1
+                before_diff = 1 
             if after_diff == 0:
-                after_diff = 1
+                after_diff = 1  
 
             result_diff = 1/(before_diff/after_diff)
 
@@ -232,7 +234,7 @@ def costmatrix_angle( fish_dict, unionfishid_list, cost_nextcntid_list, frame_in
             for k in range( 0, len(index_list), 1):
                 index = index_list[k]
                 cost_matrix[fishid_num][index] = cost
-    cost_matrix[ cost_matrix == -1] = max_value + 1
+    cost_matrix[ cost_matrix == -1] = max_value + 1 
 
 
 

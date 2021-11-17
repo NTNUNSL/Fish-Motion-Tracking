@@ -11,16 +11,16 @@ def cnt_mhi_filter( frame, contours, motions, avgfish_bgr, boundary):
         cnt_rect = cv2.minAreaRect(contours[i])
         cnt_box  = cv2.boxPoints(cnt_rect)
 
-        bool_intersect   = False
-        motion_list      = []
-        cx_sum, cy_sum   = 0, 0
+        bool_intersect   = False 
+        motion_list      = []    
+        cx_sum, cy_sum   = 0, 0 
         angle_sum, r_sum = 0, 0
         intersect_time   = 0
         for j in range( 0, len(motions), 1):
-            mot_x, mot_y = motions[j]["X"], motions[j]["Y"]
+            mot_x, mot_y = motions[j]["X"], motions[j]["Y"] 
             mot_w, mot_h = motions[j]["Width"], motions[j]["Height"]
-            mot_box      = [[mot_x,mot_y],[mot_x+mot_w,mot_y],[mot_x+mot_w,mot_y+mot_h],[mot_x,mot_y+mot_h]]
-            intersect    = Functions.two_shape_intersect( cnt_box, 'Rect', mot_box, 'Rect')            
+            mot_box = [[mot_x,mot_y],[mot_x+mot_w,mot_y],[mot_x+mot_w,mot_y+mot_h],[mot_x,mot_y+mot_h]]
+            intersect = Functions.two_shape_intersect( cnt_box, 'Rect', mot_box, 'Rect')            
 
             if bool_intersect == False and intersect == True :
                 bool_intersect = True
@@ -48,12 +48,13 @@ def cnt_mhi_filter( frame, contours, motions, avgfish_bgr, boundary):
             angle     = angle_sum / r_sum
             cmp_cnt_mot_table[cnt_id] = {"MotionIDs": motion_list, "Circle_X": cx, "Circle_Y": cy, "Radius": r, "Angle": angle}
 
+
     if len(no_cmp_mot) != 0:
         num_of_cnt = len(contours)
         temp_contour, temp_cmp_cnt_mot_table = region_detect_contour( frame, no_cmp_mot, motions, num_of_cnt, avgfish_bgr, boundary)
 
-        contours = contours + temp_contour
-        cmp_cnt_mot_table.update(temp_cmp_cnt_mot_table)
+        contours = contours + temp_contour 
+        cmp_cnt_mot_table.update(temp_cmp_cnt_mot_table)!
 
     cmp_cnt_mot_table = dict(sorted(cmp_cnt_mot_table.items()))
 
@@ -87,9 +88,10 @@ def region_detect_contour( frame, no_cmp_mot, motions, num_of_cnt, avgfish_bgr, 
 
         for j in range( 0, len(contours), 1):
             bool_intersect = False
-            contours[j][:]+= [ int(roi_minx), int(roi_miny)]
+            contours[j][:]+= [ int(roi_minx), int(roi_miny)] 
+
             cnt_area       = cv2.contourArea(contours[j])
-            cnt_rect       = cv2.minAreaRect(contours[j])
+            cnt_rect       = cv2.minAreaRect(contours[j]) 
             cnt_rect_width = cnt_rect[1][0]
             cnt_rect_high  = cnt_rect[1][1]
             cnt_rect_long  = max( cnt_rect_width, cnt_rect_high)
@@ -104,7 +106,7 @@ def region_detect_contour( frame, no_cmp_mot, motions, num_of_cnt, avgfish_bgr, 
             if cnt_rect_short >= roi_short * limit:
                 continue
             
-            if avgfish_bgr != None:
+            if avgfish_bgr != None: 
                 cnt_bgr = ImgProcessing.compute_contour_bgr( frame, contours, j)
                 bool_color = Functions.filter_contour_bgr( avgfish_bgr, cnt_bgr)
                 if bool_color == False:

@@ -56,56 +56,56 @@ def plot_main( video_name, folder_path, frame_index, frame_dict, history_contour
 def save_original_pic( video_name, folder_path, frame_index, frame):
     file_name = "original"
     output_pic_ori_path = folder_path + "OriginalPicture"
-    if not os.path.isdir(output_pic_ori_path):
+    if not os.path.isdir(output_pic_ori_path): 
         os.mkdir(output_pic_ori_path)
 
     frame_index = str(frame_index).replace(".0","") 
     image_name  = video_name +"_"+ file_name +"_"+ str(frame_index) +".png"
     image_path  = output_pic_ori_path + "/" + image_name 
 
-    cv2.imwrite( image_path, frame)
+    cv2.imwrite( image_path, frame) 
 
 
 def save_fishframe_one( video_name, folder_path, frame_index, contour_frame): 
     file_name = "Fishs"
     output_pic_ori_path = folder_path + "FishPicture"
-    if not os.path.isdir(folder_path):
+    if not os.path.isdir(folder_path): 
         os.mkdir(folder_path)
-    if not os.path.isdir(output_pic_ori_path):
+    if not os.path.isdir(output_pic_ori_path): 
         os.mkdir(output_pic_ori_path)
 
     frame_index = str(frame_index).replace(".0","") 
     image_name  = video_name +"_"+ file_name +"_"+ str(frame_index) +".png"
     image_path  = output_pic_ori_path + "/" + image_name 
-    cv2.imwrite( image_path, contour_frame)
+    cv2.imwrite( image_path, contour_frame) 
 
 
 def save_combineframe( video_name, folder_path, frame_index, contour_frame, nextcontour_frame): 
     file_name = "Combine"
     output_pic_ori_path = folder_path + "CombinePicture"
-    if not os.path.isdir(folder_path):
+    if not os.path.isdir(folder_path): 
         os.mkdir(folder_path)
-    if not os.path.isdir(output_pic_ori_path):
+    if not os.path.isdir(output_pic_ori_path): 
         os.mkdir(output_pic_ori_path)
 
-    comb_frame  = np.hstack(( contour_frame, nextcontour_frame))
+    comb_frame  = np.hstack(( contour_frame, nextcontour_frame)) 
     frame_index = str(frame_index).replace(".0","") 
     image_name  = video_name +"_"+ file_name +"_"+ str(frame_index) +".png"
     image_path  = output_pic_ori_path + "/" + image_name 
-    cv2.imwrite( image_path, comb_frame)
+    cv2.imwrite( image_path, comb_frame) 
 
 
 def save_combineframe_mhi( video_name, folder_path, frame_index, mhi_frame, mhi_nextframe):
     file_name = "MHI"
     output_pic_ori_path = folder_path + "MotionHistoryImage"
-    if not os.path.isdir(folder_path):
+    if not os.path.isdir(folder_path): 
         os.mkdir(folder_path)
     if not os.path.isdir(output_pic_ori_path):
         os.mkdir(output_pic_ori_path)
 
-    comb_frame  = np.hstack(( mhi_frame, mhi_nextframe))
+    comb_frame  = np.hstack(( mhi_frame, mhi_nextframe)) 
     frame_index = str(frame_index).replace(".0","") 
     image_name  = video_name +"_"+ file_name +"_"+ str(frame_index) +".png"
     image_path  = output_pic_ori_path + "/" + image_name 
-    cv2.imwrite( image_path, comb_frame)
+    cv2.imwrite( image_path, comb_frame) 
 

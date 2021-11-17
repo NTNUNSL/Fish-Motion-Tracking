@@ -21,20 +21,21 @@ def track_main( frame_index, frame_dict, history_contour_dict, history_motion_di
     contours, cnt_mot_cmptable      = Contour2MHI.cnt_mhi_filter( frame, frame_contours, frame_motions, None, boundary)
     next_contours, mot_cnt_cmptable = MHI2Contour.mhi_cnt_filter( nextframe, nextframe_contours, frame_motions, None, boundary)
 
+    compare_dict = cntid_mhi_compare( cnt_mot_cmptable, mot_cnt_cmptable)
 
-    compare_dict      = cntid_mhi_compare( cnt_mot_cmptable, mot_cnt_cmptable)
     compare_intersect = cntid_check_intersect( compare_dict, contours, next_contours, nextframe)
-    compare_filter    = compare_cntfilter( compare_intersect, contours, num_of_fish)
-    compare_result    = cntid_assignment( compare_filter, contours, next_contours)
 
+    compare_filter = compare_cntfilter( compare_intersect, contours, num_of_fish)
+
+    compare_result = cntid_assignment( compare_filter, contours, next_contours)
 
     if len(compare_result) < num_of_fish: 
         num_of_lostfish = int(num_of_fish-len(compare_result))
         compare_result  = find_freeze( compare_result, contours, next_contours, num_of_lostfish, frame, nextframe)
 
     fish_dict, fishid_movement = create_fishdict( compare_result, contours, next_contours, frame_index, cnt_mot_cmptable)
-    fisharea_dict, avgfish_bgr = compute_avgfish_area( frame_index, frame_dict, fish_dict, contours, next_contours)
 
+    fisharea_dict, avgfish_bgr = compute_avgfish_area( frame_index, frame_dict, fish_dict, contours, next_contours)
 
 
     return contours, next_contours, fish_dict, fishid_movement, fisharea_dict, avgfish_bgr
@@ -142,7 +143,7 @@ def cntid_assignment( compare_dict, contours, next_contours):
 
     max_size    = max( len(cntid_list), len(nextcntid_all))
     cost_matrix = np.empty((max_size,max_size))
-    cost_matrix[:,:] = -1
+    cost_matrix[:,:] = -1 
     max_value   = 0
     for i in range( 0, len(compare_dict), 1):
         cnt_id = cntid_list[i]
@@ -272,7 +273,7 @@ def find_freeze( compare_dict, contours, next_contours, num_of_lostfish, frame, 
                 intersect_list.append(nextcnt_id)
         if len(intersect_list) == 1:
             freeze_cmp[cnt_id] = intersect_list[0]
-        else:
+        else: 
             max_nextcntid   = None
             max_nextcntarea = 0
             for k in range( 0, len(intersect_list), 1):
@@ -292,7 +293,7 @@ def find_freeze( compare_dict, contours, next_contours, num_of_lostfish, frame, 
 
 
 def create_fishdict( compare_dict, contours, next_contours, frame_index, cnt_mot_cmptable):
-    fish_dict       = {}
+    fish_dict       = {} 
     num_id          = 0
     fishid_nextcnt  = {}
     fishid_movement = {}
@@ -368,7 +369,6 @@ def compute_avgfish_area( frame_index, frame_dict, fish_dict, contours, next_con
     cnt_times     = dict((x, cntid_list.count(x)) for x in set(cntid_list)) 
     nextcnt_times = dict((x, nextcntid_list.count(x)) for x in set(nextcntid_list)) 
 
-
     sum_cont = 0
     sum_b, sum_g, sum_r = 0, 0, 0
     for i in range( 0, len(fish_dict), 1):
@@ -377,7 +377,7 @@ def compute_avgfish_area( frame_index, frame_dict, fish_dict, contours, next_con
         fish_id     = fish_ids[i]
         cnt_id      = fish_dict[fish_id]["FrameIndex"+str(frame_index)]["ContourID"]
         nextcnt_id  = fish_dict[fish_id]["FrameIndex"+str(frame_index)]["NextContourID"]
-        if cnt_times[cnt_id] == 1:
+        if cnt_times[cnt_id] == 1: 
             cnt         = contours[cnt_id]
             cnt_area    = cv2.contourArea(cnt)
             cnt_area    = round( cnt_area, 2)

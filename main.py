@@ -16,40 +16,39 @@ import cv2
 import numpy as np
 
 
-
 MHI_DURATION   = 0.5
-MAX_TIME_DELTA = 0.5
-MIN_TIME_DELTA = 0.05
+MAX_TIME_DELTA = 0.5 
+MIN_TIME_DELTA = 0.05 
 
-
-BOOL_INIT       = False
-BOOL_CCD_CAMERA = False
-BOOL_PLOT       = True
+BOOL_INIT       = False 
+BOOL_CCD_CAMERA = False 
+BOOL_PLOT       = True  
 
 if __name__ == '__main__':
     num_of_fish, video_name, video_path, boundary = GUI.initialization()
 
     capture, out_folder_path, out_pic_path, first_frame = System.check_video( video_path, video_name) 
-    frame_index  = int(capture.get(cv2.CAP_PROP_POS_FRAMES))
-    frame_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    frame_width  = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))
-    frame_size   = ( frame_width, frame_height)
-    video_fps    = int(capture.get(cv2.CAP_PROP_FPS))
-    video_length = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
+    frame_index  = int(capture.get(cv2.CAP_PROP_POS_FRAMES))   
+    frame_height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT)) 
+    frame_width  = int(capture.get(cv2.CAP_PROP_FRAME_WIDTH))  
+    frame_size   = ( frame_width, frame_height)                
+    video_fps    = int(capture.get(cv2.CAP_PROP_FPS))          
+    video_length = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))  
 
+    frame_dict = {} 
 
-    frame_dict           = {} 
-    history_contour_dict = {}
-    history_motion_dict  = {}
-    fish_dict            = {}
-    fishcolor_dict       = {}
+    history_contour_dict = {} 
+    history_motion_dict  = {} 
+
+    fish_dict      = {}
+    fishcolor_dict = {}
 
     write_frameindex  = 1
     remove_frameindex = 1
     timestamp         = 0
     timestamp_diff    = 2.7/video_fps
     motion_history    = np.zeros(( frame_height, frame_width), np.float32)
-    block_size        = None
+    block_size        = None 
     offset            = None
     avgfish_bgr       = None
 
@@ -58,7 +57,7 @@ if __name__ == '__main__':
         ret, frame   = capture.read()
         origin_frame = frame.copy()
         frame_index  = int(capture.get(cv2.CAP_PROP_POS_FRAMES))
-        frame_dict[frame_index] = origin_frame
+        frame_dict[frame_index] = origin_frame 
 
         prev_oriframe = frame_dict[frame_index-1]
         prev_frame    = prev_oriframe.copy()
@@ -77,7 +76,7 @@ if __name__ == '__main__':
         history_motion_dict[frame_index-1] = motions
 
         multi = 0.5
-        if frame_index == 2:
+        if frame_index == 2: 
             history_contour_dict[frame_index-1] = FirstFindContour.mhiroi_findcnt( prev_frame, frame_index-1, motions, multi, boundary, None, None)
             history_contour_dict[frame_index]   = FirstFindContour.mhiroi_findcnt( frame, frame_index, motions, multi, boundary, None, None)
 
@@ -91,14 +90,16 @@ if __name__ == '__main__':
                     filter_contours.append(contours[i])
             history_contour_dict[frame_index] = filter_contours
 
-
         if frame_index == 2:             
             contours, next_contours, fish_dict, fishid_movement, fisharea_dict, avgfish_bgr = TrackFirst.track_main( frame_index-1, frame_dict, history_contour_dict, history_motion_dict, boundary, num_of_fish)
+
             history_contour_dict[frame_index-1] = contours
             history_contour_dict[frame_index]   = next_contours
 
-            fishcolor_dict     = Functions.fishid_color_create( fishcolor_dict, fish_dict)
+            fishcolor_dict = Functions.fishid_color_create( fishcolor_dict, fish_dict)
+
             block_size, offset = DataProcessing.update_blocksize( fish_dict, frame_index-1, next_contours, block_size)
+
 
         elif frame_index > 2 and BOOL_INIT == False:
             contours, next_contours, fish_dict, fisharea_dict, avgfish_bgr, fishid_movement = Track.track_main( frame_index-1, frame_dict, history_contour_dict, history_motion_dict, fish_dict, fisharea_dict, avgfish_bgr, boundary, fishid_movement)
@@ -107,7 +108,8 @@ if __name__ == '__main__':
 
             if len(fishcolor_dict) != len(fish_dict):
                 fishcolor_dict = Functions.fishid_color_update( fishcolor_dict, fish_dict)
-            block_size, offset = DataProcessing.update_blocksize( fish_dict, frame_index-1, next_contours, block_size, offset)
+
+            block_size, offset = DataProcessing.update_blocksize( fish_dict, frame_index-1, next_contours, block_size)
 
             BOOL_INIT, init_fishid = CheckInit.check_init( num_of_fish, fishid_movement)
             if BOOL_INIT == True:
@@ -118,8 +120,8 @@ if __name__ == '__main__':
             contours, next_contours, fish_dict, fisharea_dict, avgfish_bgr = Track.track_main( frame_index-1, frame_dict, history_contour_dict, history_motion_dict, fish_dict, fisharea_dict, avgfish_bgr, boundary, None)
             history_contour_dict[frame_index-1] = contours
             history_contour_dict[frame_index]   = next_contours
-            
-            block_size, offset = DataProcessing.update_blocksize( fish_dict, frame_index-1, next_contours, block_size, offset)
+
+            block_size, offset = DataProcessing.update_blocksize( fish_dict, frame_index-1, next_contours, block_size)
 
         if BOOL_INIT == True and BOOL_PLOT == True:
             write_startindex = write_frameindex
@@ -132,17 +134,18 @@ if __name__ == '__main__':
 
                 write_frameindex = write_frameindex + 1
 
+
         if frame_index > 30 and BOOL_INIT == True:
             frame_dict, history_contour_dict, history_motion_dict, fish_dict = RemoveCatch.remove_main( frame_dict, history_contour_dict, history_motion_dict, fish_dict, remove_frameindex)
             remove_frameindex = remove_frameindex + 1
 
-
         if frame_index == video_length:
+            print(" Finished Reading the Video ! ")
             break
         if 0xFF & cv2.waitKey(5) == 27:
             break
 
     capture.release()
-    writer.release()
+
 
 

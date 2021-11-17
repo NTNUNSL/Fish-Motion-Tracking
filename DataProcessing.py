@@ -1,7 +1,6 @@
 import cv2
 from math import *
 
-
 def getAngleBetweenPoints(x_orig, y_orig, x_target, y_target):
     deltaY = y_orig - y_target
     deltaX = x_orig - x_target
@@ -14,7 +13,7 @@ def getAngleBetweenPoints(x_orig, y_orig, x_target, y_target):
     return angle
 
 
-def update_blocksize( fish_dict, frame_index, next_contours, old_block_size):
+def update_blocksize( fish_dict, frame_index, next_contours, old_block_size): 
     nextcntid_list = []
     fishid_keys    = list(fish_dict.keys())
     frame_index    = "FrameIndex"+str(frame_index)
@@ -36,7 +35,7 @@ def update_blocksize( fish_dict, frame_index, next_contours, old_block_size):
     roi_rect_long  = int(sum_rect_long / len(nextcntid_list))
     new_block_size = int((roi_rect_long)/2) 
     if old_block_size != None:
-        growup_limit = 0.2
+        growup_limit = 0.2 
         if new_block_size > (old_block_size *(1 + growup_limit)):
             block_size = int(old_block_size * (1+growup_limit))
         else:
@@ -61,3 +60,4 @@ def find_in_list( mylist, elem):
         if elem in sub_list:
             return True, mylist.index(sub_list)
     return False, None
+

@@ -47,7 +47,7 @@ def bool_rematchid_nextcnt( newid_setlist, contours, next_contours, nextframe, a
                 nextcntids.remove(nextcntid)
                 cont = cont + 1
         newid_setlist[i][1] = nextcntids
-        if len(nextcntids) == 0:
+        if len(nextcntids) == 0: 
             newid_setlist.pop(newid_set)
             rm_newid_setlist.extend([newid_set])
             continue
@@ -88,8 +88,8 @@ def bool_rematchid_nextcnt( newid_setlist, contours, next_contours, nextframe, a
 
 def remove_newids_notfish( rm_newid_setlist, compare_dict):
     for i in range( 0, len(rm_newid_setlist), 1):
-        rm_newid_set     = rm_newid_setlist[i]
-        rm_newcntids     = rm_newid_set[0]
+        rm_newid_set = rm_newid_setlist[i]
+        rm_newcntids = rm_newid_set[0]
 
         for j in range( 0, len(rm_newcntids), 1):
             cntid = rm_newcntids[j]
@@ -129,7 +129,7 @@ def fishid_rematch_cntid_less( frame_index, fish_dict, compare_dict, contours, h
         fish_id = pre_fishid_cntid_keys[i]
         cnt_id  = cntid_list[col_ind[i]]
         compare_result[fish_id] = cnt_id
-    
+
     bool_same      = True
     change_fishids = []
     pre_fishid_cntid_keys = list(fishid_precntid.keys())
@@ -144,15 +144,14 @@ def fishid_rematch_cntid_less( frame_index, fish_dict, compare_dict, contours, h
 
     return compare_result, bool_same, change_fishids
 
-
 def fishid_rematch_cntid( frame_index, frame_dict, history_contour_dict, fish_dict, contours):
     pre_frameindex     = frame_index - 1
     pre_frameindex_str = 'FrameIndex'+str(pre_frameindex)
     pre_contours       = history_contour_dict[pre_frameindex]
 
-    pre_fishid_cntid     = {}
-    pre_fishid_nextcntid = {}
-    pre_cntid_fishid     = {}
+    pre_fishid_cntid     = {} 
+    pre_fishid_nextcntid = {} 
+    pre_cntid_fishid     = {} 
     fishdict_keys        = list(fish_dict.keys())
     for i in range( 0, len(fish_dict), 1):
         fish_id = fishdict_keys[i]
@@ -254,9 +253,8 @@ def update_new_compare( compare_result, change_fishids, frame_index, fish_dict, 
         precnt_cy = precnt_coordinate[1]
 
         cnt_m  = cv2.moments(cnt)
-        cnt_cx = int(cnt_m["m10"]/cnt_m["m00"])
-        cnt_cy = int(cnt_m['m01']/cnt_m['m00'])
-
+        cnt_cx = int(cnt_m["m10"]/cnt_m["m00"]) 
+        cnt_cy = int(cnt_m['m01']/cnt_m['m00']) 
         line_angle = DataProcessing.getAngleBetweenPoints( precnt_cx, precnt_cy, cnt_cx, cnt_cy)
         
         if len(cntid_fishid[cnt_id]) > 1:
@@ -268,7 +266,7 @@ def update_new_compare( compare_result, change_fishids, frame_index, fish_dict, 
         fish_detail['NextContourInedexPoint'] = (cnt_cx,cnt_cy)
         fish_detail['LineAngle'] = round( line_angle, 2)
         fish_detail['Intersect'] = intersect_fishid
-        fish_dict[fish_id]['FrameIndex'+str(frame_index)] = fish_detail
+        fish_dict[fish_id]['FrameIndex'+str(frame_index)] = fish_detail 
 
         if intersect_fishid != None:
             fisharea_dict[fish_id] = cnt_area

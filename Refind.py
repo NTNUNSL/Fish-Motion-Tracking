@@ -24,9 +24,9 @@ def check_fish_allin( fish_dict, unionfishid_list):
 
 
 def refind_fish_surface( frame_index, fish_dict, miss_fishids, unionfishid_list, contours, next_contours, nextframe, avgfish_bgr):
-    succe_nextcntids = []
+    succe_nextcntids = [] 
     for i in range( 0, len(unionfishid_list), 1):
-        if len(unionfishid_list[i][0]) > 0:
+        if len(unionfishid_list[i][0]) > 0: 
             succe_nextcntids = succe_nextcntids + unionfishid_list[i][1]
 
     compare_new  = {}
@@ -62,7 +62,7 @@ def refind_fish_surface( frame_index, fish_dict, miss_fishids, unionfishid_list,
             nextcnt     = next_contours[nextcnt_id]
             nextcnt_bgr = ImgProcessing.compute_contour_bgr( nextframe, next_contours, nextcnt_id)
             bool_color  = Functions.filter_contour_bgr( avgfish_bgr, nextcnt_bgr)
-            if bool_color == False:
+            if bool_color == False: 
                 intersect_ids.remove(nextcnt_id)
                 cont = cont + 1
 
@@ -90,7 +90,7 @@ def refind_fish_surface( frame_index, fish_dict, miss_fishids, unionfishid_list,
 
 def refind_fish_deep( frame_index, fish_dict, miss_fishids, unionfishid_list, contours, next_contours, frame, nextframe, boundary):
     nextframe_c = nextframe.copy()
-    succe_nextcntids = []
+    succe_nextcntids = [] 
     for i in range( 0, len(unionfishid_list), 1):
         succe_nextcntids = succe_nextcntids + unionfishid_list[i][1]
 
@@ -200,5 +200,7 @@ def refind_fish_deep( frame_index, fish_dict, miss_fishids, unionfishid_list, co
             miss_fishids.remove(fishid)
 
 
+
     return unionfishid_list, next_contours, useoldcnt_fishids
+
 

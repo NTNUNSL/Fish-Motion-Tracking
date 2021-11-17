@@ -8,12 +8,12 @@ def mhiroi_findcnt( frame, frame_index, motions, multi, boundary, block_size, of
     if frame_index <= 2:
         new_roi, roi_frame = compute_roi_motion( frame, motions, multi, boundary)
         roi_frame = frame[boundary[0][1]:boundary[1][1],boundary[0][0]:boundary[1][0]]
-        roi_minx  = boundary[0][0]
-        roi_miny  = boundary[0][1]
+        roi_minx= boundary[0][0]
+        roi_miny= boundary[0][1]
     elif frame_index > 2:
         new_roi, roi_frame = compute_roi_motion( frame, motions, multi, boundary)
-        roi_minx = new_roi[0][0]
-        roi_miny = new_roi[0][1]
+        roi_minx= new_roi[0][0]
+        roi_miny= new_roi[0][1]
     gray     = cv2.cvtColor( roi_frame, cv2.COLOR_BGR2GRAY)
     blur_img = cv2.medianBlur(gray, 5) 
 
@@ -58,7 +58,7 @@ def compute_roi_motion( frame, motions, multi, boundary):
     roi_minx, roi_maxx = (roi_minx-range_x),(roi_maxx+range_x)
     roi_miny, roi_maxy = (roi_miny-range_y),(roi_maxy+range_y)
 
-
+    frame_height, frame_width = frame.shape[:2]
     roi_minx = int(max( roi_minx, boundary[0][0]))
     roi_miny = int(max( roi_miny, boundary[0][1]))
     roi_maxx = int(min( roi_maxx, boundary[1][0]))
@@ -93,7 +93,7 @@ def filter_contour_motion( contours, roi):
         cnt_area = cv2.contourArea(contours[i])
         if cnt_area < roi_area * 0.001 : 
             continue
-
+        
         rect       = cv2.minAreaRect(contours[i])
         rect_long  = max(rect[1][0], rect[1][1])
         rect_short = min(rect[1][0], rect[1][1])
@@ -101,7 +101,7 @@ def filter_contour_motion( contours, roi):
             continue
         if rect_short >= roi_short * limit:
             continue
-
+        
         percent_limit = 7.5
         rect_p = round( (rect_long/rect_short), 3)
         if rect_p > percent_limit:
@@ -111,8 +111,5 @@ def filter_contour_motion( contours, roi):
 
 
     return filter_contour
-
-
-
 
 

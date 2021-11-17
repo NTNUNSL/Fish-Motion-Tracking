@@ -3,7 +3,7 @@ import cv2
 
 def video_init( video_name, folder_path, video_fps, frame_size):
     codec  = 'mp4v'
-    fourcc = cv2.VideoWriter_fourcc(*codec)
+    fourcc = cv2.VideoWriter_fourcc(*codec) 
     out_video_path = folder_path+'/'+video_name+'.mp4'
     writer = cv2.VideoWriter(filename= out_video_path, apiPreference= 0,fourcc= fourcc,
     fps= video_fps, frameSize= frame_size, isColor= True)
@@ -16,7 +16,7 @@ def video_main( frame_index, frame_dict, history_contour_dict, fish_dict, fishco
     frame_index_str  = "FrameIndex"+str(frame_index)
     cnt_list         = history_contour_dict[frame_index]
     fishdict_details = {}
-    cntid_dict       = {}
+    cntid_dict       = {} 
     fishid_keys      = list(fish_dict.keys())
     for i in range( 0, len(fishid_keys), 1):
         fish_id = fishid_keys[i]
